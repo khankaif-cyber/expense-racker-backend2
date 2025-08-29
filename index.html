@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome | Expense Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 0 20px;
+    }
+
+    header {
+      font-size: 40px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      animation: fadeDown 1s ease-in-out;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    p {
+      font-size: 18px;
+      max-width: 500px;
+      margin-bottom: 30px;
+    }
+
+    .btn-container {
+      display: flex;
+      gap: 20px;
+    }
+
+    a {
+      text-decoration: none;
+      padding: 12px 25px;
+      background: white;
+      color: #764ba2;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    a:hover {
+      transform: scale(1.1);
+      background: #f0f0f0;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 15px;
+      font-size: 14px;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+    <!-- h2 id="welcome"></h2>
+
+  <!-- Add Expense Form -->
+  <!--<form action="/add-expense" method="POST">
+    <input type="hidden" id="userId" name="userId">
+    <input type="number" name="amount" placeholder="Amount" required>
+    <input type="text" name="category" placeholder="Category" required>
+    <input type="text" name="description" placeholder="Description">
+    <button type="submit">Add Expense</button>
+  </form>
+
+  <h3>Your Expenses:</h3>
+  <ul id="expense-list"></ul>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get("username");
+    const userId = params.get("userId");
+
+    document.getElementById("welcome").textContent = "Welcome " + username;
+    document.getElementById("userId").value = userId;
+
+    fetch(`/expenses/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById("expense-list");
+        data.forEach(exp => {
+          const li = document.createElement("li");
+          li.textContent = `${exp.category}: ₹${exp.amount} - ${exp.description}`;
+          list.appendChild(li);
+        });
+      });
+  </script>
+  </body>
+  </html> -->
+
+
+
+  <header>💰 Expense Tracker</header>
+   <p>Take control of your finances! Track your income, expenses, and savings with ease.  
+  Sign up today and start your journey to financial freedom.</p>
+  
+  <div class="btn-container">
+    <a href="login.html">Login</a>
+    <a href="signup.html">Sign Up</a>
+  </div>
+
+  <footer>&copy; 2025 Expense Tracker. All rights reserved.</footer>
+
+</body>
+</html>
