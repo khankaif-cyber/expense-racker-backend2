@@ -181,17 +181,17 @@ app.post("/api/expenses", async (req, res) => {
 //   }
 // });
 
-app.post("/signup", async (req, res) => {
-  const { username, password } = req.body;
-  const existingUser = await User.findOne({ username });
-  if (existingUser) {
-    return res.status(400).json({ message: "User already exists" });
-  }
+// app.post("/signup", async (req, res) => {
+//   const { username, password } = req.body;
+//   const existingUser = await User.findOne({ username });
+//   if (existingUser) {
+//     return res.status(400).json({ message: "User already exists" });
+//   }
 
-  const newUser = new User({ username, password }); // Hash password in real apps
-  await newUser.save();
-  res.json({ message: "Signup successful" });
-});
+//   const newUser = new User({ username, password }); // Hash password in real apps
+//   await newUser.save();
+//   res.json({ message: "Signup successful" });
+// });
 
 
 // Login
@@ -212,18 +212,73 @@ app.post("/signup", async (req, res) => {
 //   }
 // });
 
+// app.post("/login", async (req, res) => {
+//   const { username, password } = req.body;
+//   const user = await User.findOne({ username });
+//   if (!user) {
+//     return res.status(400).json({ message: "User not found" });
+//   }
+
+//   if (user.password !== password) {
+//     return res.status(400).json({ message: "Incorrect password" });
+//   }
+
+//   res.json({ message: "Login successful" });
+// });
+
+const bcrypt = require("bcrypt");
+
+// ✅ Signup Route
+app.post("/signup", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password required" });
+    }
+
+    // Check if user exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({ username, password: hashedPassword });
+    await newUser.save();
+
+    res.json({ message: "Signup successful" });
+  } catch (err) {
+    res.status(500).json({ message: "Error signing up", error: err.message });
+  }
+});
+
+// ✅ Login Route
 app.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
-  if (!user) {
-    return res.status(400).json({ message: "User not found" });
-  }
+  try {
+    const { username, password } = req.body;
 
-  if (user.password !== password) {
-    return res.status(400).json({ message: "Incorrect password" });
-  }
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password required" });
+    }
 
-  res.json({ message: "Login successful" });
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Incorrect password" });
+    }
+
+    res.json({ message: "Login successful" });
+  } catch (err) {
+    res.status(500).json({ message: "Error logging in", error: err.message });
+  }
 });
 
 
