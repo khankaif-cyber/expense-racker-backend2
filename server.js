@@ -103,185 +103,243 @@
 // });
 
 
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const User = require("./models/User");
+// require("dotenv").config();
+// const express = require("express");
+// const mongoose = require("mongoose");
+// const bcrypt = require("bcrypt");
+// const User = require("./models/User");
 
-const app = express();
-const cors = require("cors");
-app.use(cors());
+// const app = express();
+// const cors = require("cors");
+// app.use(cors());
 
-const Expense = mongoose.model(
-  "Expense",
-  new mongoose.Schema({
-    title: { type: String, required: true },
-    amount: { type: Number, required: true },
-    date: { type: Date, default: Date.now },
-  })
-);
+// const Expense = mongoose.model(
+//   "Expense",
+//   new mongoose.Schema({
+//     title: { type: String, required: true },
+//     amount: { type: Number, required: true },
+//     date: { type: Date, default: Date.now },
+//   })
+// );
 
 
-const PORT = process.env.PORT || 3000;
+// const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// // Middleware
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
-// Root Route (for health check)
-app.get("/", (req, res) => {
-  res.send("✅ Backend API is running...");
-});
+// // Root Route (for health check)
+// app.get("/", (req, res) => {
+//   res.send("✅ Backend API is running...");
+// });
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Error:", err));
+// // MongoDB Connection
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => console.log("✅ MongoDB Connected"))
+//   .catch((err) => console.error("❌ MongoDB Error:", err));
 
-// Get expenses
-app.get("/api/expenses", async (req, res) => {
-  try {
-    const expenses = await Expense.find();
-    res.json(expenses);
-  } catch (err) {
-    res.status(500).send(`Error fetching expenses: ${err.message}`);
-  }
-});
+// // Get expenses
+// app.get("/api/expenses", async (req, res) => {
+//   try {
+//     const expenses = await Expense.find();
+//     res.json(expenses);
+//   } catch (err) {
+//     res.status(500).send(`Error fetching expenses: ${err.message}`);
+//   }
+// });
 
-// Add expense
-app.post("/api/expenses", async (req, res) => {
-  try {
-    const { title, amount } = req.body;
-    if (!title || !amount) return res.status(400).send("Title and amount required");
-    const expense = new Expense({ title, amount });
-    await expense.save();
-    res.status(201).json(expense);
-  } catch (err) {
-    res.status(500).send(`Error adding expense: ${err.message}`);
-  }
-});
+// // Add expense
+// app.post("/api/expenses", async (req, res) => {
+//   try {
+//     const { title, amount } = req.body;
+//     if (!title || !amount) return res.status(400).send("Title and amount required");
+//     const expense = new Expense({ title, amount });
+//     await expense.save();
+//     res.status(201).json(expense);
+//   } catch (err) {
+//     res.status(500).send(`Error adding expense: ${err.message}`);
+//   }
+// });
 
-// Signup
+// // Signup
+// // app.post("/signup", async (req, res) => {
+// //   try {
+// //     const { username, password } = req.body;
+// //     if (!username || !password) return res.status(400).send("Username and password required");
+
+// //     const existingUser = await User.findOne({ username });
+// //     if (existingUser) return res.status(400).send("User already exists");
+
+// //     const hashedPassword = await bcrypt.hash(password, 10);
+// //     const newUser = new User({ username, password: hashedPassword });
+// //     await newUser.save();
+
+// //     res.json({ success: true, message: "Signup successful" });
+// //   } catch (err) {
+// //     res.status(500).send(`Error signing up: ${err.message}`);
+// //   }
+// // });
+
+// // app.post("/signup", async (req, res) => {
+// //   const { username, password } = req.body;
+// //   const existingUser = await User.findOne({ username });
+// //   if (existingUser) {
+// //     return res.status(400).json({ message: "User already exists" });
+// //   }
+
+// //   const newUser = new User({ username, password }); // Hash password in real apps
+// //   await newUser.save();
+// //   res.json({ message: "Signup successful" });
+// // });
+
+
+// // Login
+// // app.post("/login", async (req, res) => {
+// //   try {
+// //     const { username, password } = req.body;
+// //     if (!username || !password) return res.status(400).send("Username and password required");
+
+// //     const user = await User.findOne({ username });
+// //     if (!user) return res.status(400).send("User not found");
+
+// //     const isMatch = await bcrypt.compare(password, user.password);
+// //     if (!isMatch) return res.status(400).json({ success: false, message: "Invalid password" });
+
+// //     res.json({ success: true, message: "Login successful" });
+// //   } catch (err) {
+// //     res.status(500).send(`Login error: ${err.message}`);
+// //   }
+// // });
+
+// // app.post("/login", async (req, res) => {
+// //   const { username, password } = req.body;
+// //   const user = await User.findOne({ username });
+// //   if (!user) {
+// //     return res.status(400).json({ message: "User not found" });
+// //   }
+
+// //   if (user.password !== password) {
+// //     return res.status(400).json({ message: "Incorrect password" });
+// //   }
+
+// //   res.json({ message: "Login successful" });
+// // });
+
+
+
+// // ✅ Signup Route
 // app.post("/signup", async (req, res) => {
 //   try {
 //     const { username, password } = req.body;
-//     if (!username || !password) return res.status(400).send("Username and password required");
 
+//     if (!username || !password) {
+//       return res.status(400).json({ message: "Username and password required" });
+//     }
+
+//     // Check if user exists
 //     const existingUser = await User.findOne({ username });
-//     if (existingUser) return res.status(400).send("User already exists");
+//     if (existingUser) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
 
+//     // Hash password
 //     const hashedPassword = await bcrypt.hash(password, 10);
+
 //     const newUser = new User({ username, password: hashedPassword });
 //     await newUser.save();
 
-//     res.json({ success: true, message: "Signup successful" });
+//     res.json({ message: "Signup successful" });
 //   } catch (err) {
-//     res.status(500).send(`Error signing up: ${err.message}`);
+//     res.status(500).json({ message: "Error signing up", error: err.message });
 //   }
 // });
 
-// app.post("/signup", async (req, res) => {
-//   const { username, password } = req.body;
-//   const existingUser = await User.findOne({ username });
-//   if (existingUser) {
-//     return res.status(400).json({ message: "User already exists" });
-//   }
-
-//   const newUser = new User({ username, password }); // Hash password in real apps
-//   await newUser.save();
-//   res.json({ message: "Signup successful" });
-// });
-
-
-// Login
+// // ✅ Login Route
 // app.post("/login", async (req, res) => {
 //   try {
 //     const { username, password } = req.body;
-//     if (!username || !password) return res.status(400).send("Username and password required");
+
+//     if (!username || !password) {
+//       return res.status(400).json({ message: "Username and password required" });
+//     }
 
 //     const user = await User.findOne({ username });
-//     if (!user) return res.status(400).send("User not found");
+//     if (!user) {
+//       return res.status(400).json({ message: "User not found" });
+//     }
 
+//     // Compare password
 //     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) return res.status(400).json({ success: false, message: "Invalid password" });
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Incorrect password" });
+//     }
 
-//     res.json({ success: true, message: "Login successful" });
+//     res.json({ message: "Login successful" });
 //   } catch (err) {
-//     res.status(500).send(`Login error: ${err.message}`);
+//     res.status(500).json({ message: "Error logging in", error: err.message });
 //   }
 // });
 
-// app.post("/login", async (req, res) => {
-//   const { username, password } = req.body;
-//   const user = await User.findOne({ username });
-//   if (!user) {
-//     return res.status(400).json({ message: "User not found" });
-//   }
 
-//   if (user.password !== password) {
-//     return res.status(400).json({ message: "Incorrect password" });
-//   }
-
-//   res.json({ message: "Login successful" });
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server running at http://localhost:${PORT}`);
 // });
 
 
+const express = require("express");
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const cors = require("cors");
+const User = require("./models/User"); // Make sure this model exists
 
-// ✅ Signup Route
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(cors());
+
+// SIGNUP
 app.post("/signup", async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({ message: "Username and password required" });
-    }
-
-    // Check if user exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    const hashedPassword = await bcrypt.hash(password, 10); // 🔑 Hash password
     const newUser = new User({ username, password: hashedPassword });
-    await newUser.save();
 
+    await newUser.save();
     res.json({ message: "Signup successful" });
-  } catch (err) {
-    res.status(500).json({ message: "Error signing up", error: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
   }
 });
 
-// ✅ Login Route
+// LOGIN
 app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).json({ message: "Username and password required" });
-    }
 
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
     res.json({ message: "Login successful" });
-  } catch (err) {
-    res.status(500).json({ message: "Error logging in", error: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
   }
 });
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
