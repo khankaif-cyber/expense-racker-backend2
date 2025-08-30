@@ -109,6 +109,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const User = require("./models/User");
 
+const app = express();
 const cors = require("cors");
 app.use(cors());
 
@@ -121,7 +122,7 @@ const Expense = mongoose.model(
   })
 );
 
-const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -226,7 +227,7 @@ app.post("/api/expenses", async (req, res) => {
 //   res.json({ message: "Login successful" });
 // });
 
-const bcrypt = require("bcrypt");
+
 
 // ✅ Signup Route
 app.post("/signup", async (req, res) => {
