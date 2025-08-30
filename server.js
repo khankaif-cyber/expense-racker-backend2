@@ -109,6 +109,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const User = require("./models/User");
 
+const cors = require("cors");
+app.use(cors());
+
 const Expense = mongoose.model(
   "Expense",
   new mongoose.Schema({
@@ -160,41 +163,69 @@ app.post("/api/expenses", async (req, res) => {
 });
 
 // Signup
+// app.post("/signup", async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+//     if (!username || !password) return res.status(400).send("Username and password required");
+
+//     const existingUser = await User.findOne({ username });
+//     if (existingUser) return res.status(400).send("User already exists");
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const newUser = new User({ username, password: hashedPassword });
+//     await newUser.save();
+
+//     res.json({ success: true, message: "Signup successful" });
+//   } catch (err) {
+//     res.status(500).send(`Error signing up: ${err.message}`);
+//   }
+// });
+
 app.post("/signup", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) return res.status(400).send("Username and password required");
-
-    const existingUser = await User.findOne({ username });
-    if (existingUser) return res.status(400).send("User already exists");
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword });
-    await newUser.save();
-
-    res.json({ success: true, message: "Signup successful" });
-  } catch (err) {
-    res.status(500).send(`Error signing up: ${err.message}`);
+  const { username, password } = req.body;
+  const existingUser = await User.findOne({ username });
+  if (existingUser) {
+    return res.status(400).json({ message: "User already exists" });
   }
+
+  const newUser = new User({ username, password }); // Hash password in real apps
+  await newUser.save();
+  res.json({ message: "Signup successful" });
 });
+
 
 // Login
+// app.post("/login", async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+//     if (!username || !password) return res.status(400).send("Username and password required");
+
+//     const user = await User.findOne({ username });
+//     if (!user) return res.status(400).send("User not found");
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) return res.status(400).json({ success: false, message: "Invalid password" });
+
+//     res.json({ success: true, message: "Login successful" });
+//   } catch (err) {
+//     res.status(500).send(`Login error: ${err.message}`);
+//   }
+// });
+
 app.post("/login", async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    if (!username || !password) return res.status(400).send("Username and password required");
-
-    const user = await User.findOne({ username });
-    if (!user) return res.status(400).send("User not found");
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ success: false, message: "Invalid password" });
-
-    res.json({ success: true, message: "Login successful" });
-  } catch (err) {
-    res.status(500).send(`Login error: ${err.message}`);
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
   }
+
+  if (user.password !== password) {
+    return res.status(400).json({ message: "Incorrect password" });
+  }
+
+  res.json({ message: "Login successful" });
 });
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
